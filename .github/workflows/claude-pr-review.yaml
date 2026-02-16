@@ -1,0 +1,31 @@
+name: Claude PR Review
+
+on:
+  pull_request:
+
+jobs:
+  claude:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+      actions: read # Required for Claude to read CI results on PRs
+      id-token: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Run Claude Code
+        id: claude
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          plugin_marketplaces: |
+            https://github.com/anthropics/claude-code.git
+          plugins: |
+            pr-review-toolkit@claude-code-plugins
+          prompt: |
+            1. Run /pr-review-toolkit:review-pr ${{ github.event.pull_request.number }}
+            2. Post review results as a PR comment using `gh pr comment`.
+          claude_args: |-
+            --allowedTools "'Bash(gh pr comment:*),Bash(gh pr review:*),Bash(gh pr diff:*),Bash(gh pr view:*),Read,Grep,Glob'"
