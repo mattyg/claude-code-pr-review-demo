@@ -54,8 +54,8 @@ jobs:
             - If the comment spans multiple lines, also include `--field start_line=<first line>` and `--field start_side="RIGHT"`
             - Post one comment per finding; do not batch multiple issues into a single comment
 
-            ### Step 4 — Post a summary comment
-            After all inline comments are posted, add a top-level PR comment summarising the overall review outcome and listing any findings that could not be mapped to a specific line:
+            ### Step 4 — Post a comment with additional findings
+            After all inline comments are posted, add a top-level PR comment listing any findings that could not be mapped to a specific line:
             ```
             gh pr comment ${{ github.event.pull_request.number }} --body "<summary>"
             ```
