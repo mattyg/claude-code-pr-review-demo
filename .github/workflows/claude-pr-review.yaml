@@ -24,10 +24,42 @@ jobs:
             https://github.com/anthropics/claude-code.git
           plugins: |
             pr-review-toolkit@claude-code-plugins
-          prompt: |          
-            1. Run /pr-review-toolkit:review-pr ${{ github.event.pull_request.number }}
-            2. Post review results as PR comments on specific lines with `gh api repos/${{ github.repository_owner }}/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments --method POST`. To target a specific line, include the fields `subject_type: line` along with `line` and optionally `start_line`.
-            3. Post any additional review results as a PR comment with `gh pr comment`.
+          prompt: |
+            ## PR Review Instructions
+
+            ### Step 1 — Run the review tool
+            Execute the following slash command to analyze the pull request:
+            /pr-review-toolkit:review-pr ${{ github.event.pull_request.number }}
+
+            ### Step 2 — Get the diff with line numbers
+            Fetch the PR diff so you know the exact line numbers for changed lines:
+            ```
+            gh pr diff ${{ github.event.pull_request.number }}
+            ```
+            Use the diff output to map each review finding to the precise line number in the file where the change appears.
+
+            ### Step 3 — Post an inline comment for EVERY finding
+            For each issue or suggestion identified in Step 1, post a pull request review comment anchored to the exact line number of the change using the GitHub API:
+            ```
+            gh api repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/comments \
+              --method POST \
+              --field body="<your comment here>" \
+              --field commit_id="$(gh pr view ${{ github.event.pull_request.number }} --json headRefOid --jq .headRefOid)" \
+              --field path="<file path>" \
+              --field line=<line number> \
+              --field side="RIGHT"
+            ```
+            - `path` must be the relative file path shown in the diff (e.g. `src/index.ts`)
+            - `line` must be the **last** line number of the changed hunk the comment applies to
+            - If the comment spans multiple lines, also include `--field start_line=<first line>` and `--field start_side="RIGHT"`
+            - Post one comment per finding; do not batch multiple issues into a single comment
+
+            ### Step 4 — Post a summary comment
+            After all inline comments are posted, add a top-level PR comment summarising the overall review outcome and listing any findings that could not be mapped to a specific line:
+            ```
+            gh pr comment ${{ github.event.pull_request.number }} --body "<summary>"
+            ```
+
           claude_args: |-
             --model sonnet
             --allowedTools "Bash(gh pr comment *),Bash(gh pr review *),Bash(gh pr diff *),Bash(gh pr view *),Bash(gh api *),Read,Grep,Glob"
