@@ -24,10 +24,10 @@ jobs:
             https://github.com/anthropics/claude-code.git
           plugins: |
             pr-review-toolkit@claude-code-plugins
-          prompt: |
+          prompt: |          
             1. Run /pr-review-toolkit:review-pr ${{ github.event.pull_request.number }}
-            2. Post review results as PR comments on specific lines with `gh api`.
+            2. Post review results as PR comments on specific lines with `gh api repos/${{ github.repository_owner }}/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments --method POST`. To target a specific line, include the fields `subject_type: line` along with `line` and optionally `start_line`.
             3. Post any additional review results as a PR comment with `gh pr comment`.
           claude_args: |-
-            --allowedTools "Bash(gh pr comment:*),Bash(gh pr review:*),Bash(gh pr diff:*),Bash(gh pr view:*),Bash(gh api:*)Read,Grep,Glob"
+            --allowedTools "Bash(gh pr comment *),Bash(gh pr review *),Bash(gh pr diff *),Bash(gh pr view *),Bash(gh api repos/${{ github.repository_owner }}/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments --method POST *)Read,Grep,Glob"
           github_token: ${{ github.token }}
