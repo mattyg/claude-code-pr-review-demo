@@ -18,8 +18,6 @@ jobs:
       - name: Run Claude Code
         id: claude
         uses: anthropics/claude-code-action@v1
-        env:
-          GH_TOKEN: ${{ github.token }}
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           plugin_marketplaces: |
@@ -31,3 +29,4 @@ jobs:
             2. Post review results as a PR comment using `gh pr comment`.
           claude_args: |-
             --allowedTools "'Bash(gh pr comment:*),Bash(gh pr review:*),Bash(gh pr diff:*),Bash(gh pr view:*),Read,Grep,Glob'"
+          github_token: ${{ github.token }}
