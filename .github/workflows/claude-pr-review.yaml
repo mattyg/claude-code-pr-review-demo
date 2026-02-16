@@ -28,5 +28,5 @@ jobs:
             1. Run /pr-review-toolkit:review-pr ${{ github.event.pull_request.number }}
             2. Post review results as a PR comment using `gh pr comment`.
           claude_args: |-
-            --allowedTools "'Bash(gh pr comment:*),Bash(gh pr review:*),Bash(gh pr diff:*),Bash(gh pr view:*),Read,Grep,Glob'"
+            --allowedTools "Bash(gh pr comment:*),Bash(gh pr review:*),Bash(gh pr diff:*),Bash(gh pr view:*),Read,Grep,Glob"
           github_token: ${{ github.token }}
