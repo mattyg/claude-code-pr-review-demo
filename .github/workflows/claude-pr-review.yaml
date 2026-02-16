@@ -7,8 +7,8 @@ jobs:
   claude:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      pull-requests: read
+      contents: read
+      pull-requests: write
       actions: read # Required for Claude to read CI results on PRs
       id-token: write
     steps:
