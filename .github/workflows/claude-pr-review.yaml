@@ -41,17 +41,21 @@ jobs:
             ### Step 3 — Post an inline comment for EVERY finding
             For each issue or suggestion identified in Step 1, post a pull request review comment anchored to the exact line number of the change using the GitHub API:
             ```
-            gh api repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/comments \
-              --method POST \
-              --field body="<your comment here>" \
-              --field commit_id="$(gh pr view ${{ github.event.pull_request.number }} --json headRefOid --jq .headRefOid)" \
-              --field path="<file path>" \
-              --field line=<line number> \
-              --field side="RIGHT"
+            curl -X POST \
+              -H "Authorization: Bearer ${{ github.token }}" \
+              -H "Accept: application/vnd.github+json" \
+              https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/comments \
+              -d '{
+                "body": "<your comment here>",
+                "commit_id": "$(gh pr view ${{ github.event.pull_request.number }} --json headRefOid --jq .headRefOid)",
+                "path": "<file path>",
+                "line": <line number>,
+                "side": "RIGHT"
+              }'
             ```
             - `path` must be the relative file path shown in the diff (e.g. `src/index.ts`)
             - `line` must be the **last** line number of the changed hunk the comment applies to
-            - If the comment spans multiple lines, also include `--field start_line=<first line>` and `--field start_side="RIGHT"`
+            - If the comment spans multiple lines, also include `"start_line": <first line>` and `"start_side": "RIGHT"`
             - Post one comment per finding; do not batch multiple issues into a single comment
 
             ### Step 4 — Post a comment with additional findings
@@ -62,5 +66,5 @@ jobs:
 
           claude_args: |-
             --model sonnet
-            --allowedTools "Bash(gh pr comment *),Bash(gh pr review *),Bash(gh pr diff *),Bash(gh pr view *),Bash(gh api *),Read,Grep,Glob"
+            --allowedTools "Bash(gh pr comment *),Bash(gh pr review *),Bash(gh pr diff *),Bash(gh pr view *),Bash(curl *),Read,Grep,Glob"
           github_token: ${{ github.token }}
