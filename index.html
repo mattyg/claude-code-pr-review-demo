@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Counter App</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: #f0f2f5;
+      font-family: sans-serif;
+    }
+
+    .counter-card {
+      background: white;
+      border-radius: 12px;
+      padding: 48px 64px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 1.2rem;
+      color: #666;
+      font-weight: 500;
+      margin-bottom: 24px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    #count {
+      font-size: 5rem;
+      font-weight: 700;
+      color: #1a1a1a;
+      min-width: 120px;
+      display: block;
+      margin-bottom: 32px;
+      transition: color 0.2s;
+    }
+
+    #count.negative {
+      color: #e53935;
+    }
+
+    .controls {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    button {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      transition: transform 0.1s, background 0.2s;
+      line-height: 1;
+    }
+
+    button:active {
+      transform: scale(0.92);
+    }
+
+    #decrement {
+      background: #ffebee;
+      color: #e53935;
+    }
+
+    #decrement:hover {
+      background: #ffcdd2;
+    }
+
+    #increment {
+      background: #e8f5e9;
+      color: #43a047;
+    }
+
+    #increment:hover {
+      background: #c8e6c9;
+    }
+
+    #reset {
+      font-size: 0.75rem;
+      background: #f5f5f5;
+      color: #999;
+      width: 40px;
+      height: 40px;
+    }
+
+    #reset:hover {
+      background: #eeeeee;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="counter-card">
+    <h1>Counter</h1>
+    <span id="count">0</span>
+    <div class="controls">
+      <button id="decrement" aria-label="Decrease">−</button>
+      <button id="reset" aria-label="Reset">↺</button>
+      <button id="increment" aria-label="Increase">+</button>
+    </div>
+  </div>
+
+  <script>
+    let count = 0;
+    const countEl = document.getElementById('count');
+
+    function update() {
+      countEl.textContent = count;
+      countEl.classList.toggle('negative', count < 0);
+    }
+
+    document.getElementById('increment').addEventListener('click', () => {
+      count++;
+      update();
+    });
+
+    document.getElementById('decrement').addEventListener('click', () => {
+      count--;
+      update();
+    });
+
+    document.getElementById('reset').addEventListener('click', () => {
+      count = 0;
+      update();
+    });
+  </script>
+</body>
+</html>
